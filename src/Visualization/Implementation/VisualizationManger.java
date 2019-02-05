@@ -1,6 +1,7 @@
 package Visualization.Implementation;
 
 import Engine.Model.Coordinate;
+import Visualization.Contract.IPathDrawer;
 import Visualization.Contract.IVisualizationManager;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -15,6 +16,7 @@ import java.util.Random;
 // TODO: mode where bug jumps back in, run indefinately?
 // TODO: look at exporting as svg
 // TODO: Live running
+// TODO: when live running, have different stroke modes to have different look? idk??
 
 public class VisualizationManger extends Canvas implements IVisualizationManager {
 
@@ -22,12 +24,17 @@ public class VisualizationManger extends Canvas implements IVisualizationManager
     private static final int WINDOW_HEIGHT = 600;
 
     private Canvas _canvas;
+    private IPathDrawer _pathDrawer;
     private GraphicsContext _gc;
     private double _pixelsPerUnitX;
     private double _pixelsPerUnitY;
 
     private Coordinate _lastCoordinate;
-    private Color _lastColor;
+
+    public VisualizationManger(IPathDrawer pathDrawer) {
+
+        _pathDrawer = pathDrawer;
+    }
 
     @Override
     public void displayWindow(Stage stage) {
@@ -61,36 +68,12 @@ public class VisualizationManger extends Canvas implements IVisualizationManager
         double plottedY = centeredY - (_pixelsPerUnitY * coordinate.getY()); // subtracted because canvas y increases as go down
 
         if (_lastCoordinate != null) {
-            Color color;
-            if (_lastColor != null) {
-                double randomRed = Math.round(2 * new Random().nextDouble()) - 1;
-                double randomGreen = Math.round(2 * new Random().nextDouble()) - 1;
-                double randomBlue = Math.round(2 * new Random().nextDouble()) - 1;
-                color = new Color(
-                        flatten(_lastColor.getRed() + (randomRed * 0.01)),
-                        flatten(_lastColor.getGreen() + (randomGreen * 0.01)),
-                        flatten(_lastColor.getBlue() + randomBlue * 0.01), 1);
-            } else {
-                color = new Color(1, 0, 0, 1);
-            }
-            _lastColor = color;
-            _gc.setStroke(color);
-            _gc.strokeLine(_lastCoordinate.getX(), _lastCoordinate.getY(), plottedX, plottedY);
+            _pathDrawer.drawPath(_gc, _lastCoordinate.getX(), _lastCoordinate.getY(), plottedX, plottedY);
         } else {
-            _gc.fillOval(plottedX, plottedY, 1, 1);
+            _pathDrawer.drawPoint(_gc, plottedX, plottedY);
         }
 
         // Remember this coordinate to draw from next time
         _lastCoordinate = new Coordinate(plottedX, plottedY);
-    }
-
-    private double flatten(double in) {
-        if (in > 1) {
-            return 1;
-        } else if (in < 0) {
-            return 0;
-        } else {
-            return in;
-        }
     }
 }

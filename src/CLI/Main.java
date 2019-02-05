@@ -8,8 +8,10 @@ import Engine.Implementation.ConstantDistanceCoordinateCrawler;
 import Engine.Implementation.RandomAngleGenerator;
 import Engine.Model.Coordinate;
 import Visualization.Contract.IVisualizationManager;
+import Visualization.Implementation.RandomColorPathDrawer;
 import Visualization.Implementation.VisualizationManger;
 import javafx.application.Application;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.Arrays;
@@ -21,7 +23,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        IVisualizationManager visualizationManager = new VisualizationManger();
+        IVisualizationManager visualizationManager = new VisualizationManger(new RandomColorPathDrawer(new Color(0.5, 0.5, 0.5, 1)));
         visualizationManager.displayWindow(primaryStage);
         visualizationManager.drawCircle(0, 0, 1);
 
