@@ -37,9 +37,8 @@ public class ConstantDistanceCoordinateCrawler implements ICoordinateCrawler {
             shiftY = Math.sin(angleToTravel - Math.toRadians(270)) * _distance;
         }
 
-        coordinate.setX(coordinate.getX() + shiftX);
-        coordinate.setY(coordinate.getY() + shiftY);
-
-        return coordinate;
+        return new Coordinate(
+                coordinate.getX() + shiftX,
+                coordinate.getY() + shiftY);
     }
 }

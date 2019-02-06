@@ -30,6 +30,18 @@ public class RandomColorPathDrawer implements IPathDrawer {
     }
 
     @Override
+    public void drawPath(GraphicsContext gc, double[] xPoints, double[] yPoints, int nPoints) {
+        Paint originalStroke = gc.getStroke(); // Save gcs original stroke value
+
+        Color color = getNeighbouringColor(_lastColor);
+        _lastColor = color;
+        gc.setStroke(color);
+        gc.strokePolyline(xPoints, yPoints, nPoints);
+
+        gc.setStroke(originalStroke); // Return gc to its original stroke color
+    }
+
+    @Override
     public void drawPoint(GraphicsContext gc, double x, double y) {
 
         Paint originalStroke = gc.getStroke(); // Save gcs original stroke value

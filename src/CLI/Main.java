@@ -10,33 +10,60 @@ import Engine.Model.Coordinate;
 import Visualization.Contract.IVisualizationManager;
 import Visualization.Implementation.RandomColorPathDrawer;
 import Visualization.Implementation.VisualizationManger;
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main extends Application {
-
-    private static final int NUMBER_OF_SIMULATIONS = 100;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        IVisualizationManager visualizationManager = new VisualizationManger(new RandomColorPathDrawer(new Color(0.5, 0.5, 0.5, 1)));
+        IVisualizationManager visualizationManager = new VisualizationManger(new RandomColorPathDrawer(new Color(0.5, 0.5, 1, 1)));
         visualizationManager.displayWindow(primaryStage);
         visualizationManager.drawCircle(0, 0, 1);
 
         IAngleGenerator angleGenerator = new RandomAngleGenerator();
-        ICoordinateCrawler coordinateCrawler = new ConstantDistanceCoordinateCrawler(0.005, angleGenerator);
+        ICoordinateCrawler coordinateCrawler = new ConstantDistanceCoordinateCrawler(0.01, angleGenerator);
         ICircleExitChecker circleExitChecker = new CircleExitChecker(1);
 
-        Coordinate coordinate = new Coordinate(0, 0);
+        new AnimationTimer() {
 
-        while (!circleExitChecker.isOutsideCircle(coordinate)) {
-            coordinate = coordinateCrawler.randomMoveFrom(coordinate);
-            visualizationManager.addPoint(coordinate);
-        }
+            private Coordinate _coordinate = new Coordinate(0, 0);
+
+            @Override
+            public void handle(long now) {
+                Platform.runLater(() -> {
+                    if (!circleExitChecker.isOutsideCircle(_coordinate)) {
+                        _coordinate = coordinateCrawler.randomMoveFrom(_coordinate);
+                        visualizationManager.addPoint(_coordinate);
+                    }
+                });
+            }
+        }.start();
+
+//        Task task = new Task() {
+//            @Override
+//            protected Object call() throws Exception {
+//
+//                Coordinate coordinate = new Coordinate(0, 0);
+//
+//                while (!circleExitChecker.isOutsideCircle(coordinate)) {
+//                    coordinate = coordinateCrawler.randomMoveFrom(coordinate);
+//                    visualizationManager.addPoint(coordinate);
+//                }
+//                return null;
+//            }
+//        };
+//
+//        Thread t = new Thread(task);
+//        t.start();
 
 //        double[] crawlDistances = new double[] { 0.8, 0.4, 0.2, 0.1, 0.05, 0.025, 0.0125, 0.00625, 0.003125, 0.0015625, 0.00078125, 0.00039062 };
 //
