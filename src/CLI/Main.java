@@ -8,29 +8,31 @@ import Engine.Implementation.ConstantDistanceCoordinateCrawler;
 import Engine.Implementation.RandomAngleGenerator;
 import Engine.Model.Coordinate;
 import Visualization.Contract.IVisualizationManager;
+import Visualization.Implementation.PngImageExporter;
 import Visualization.Implementation.RandomColorPathDrawer;
 import Visualization.Implementation.VisualizationManger;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Main extends Application {
+
+    private static final int WINDOW_WIDTH = 4000;
+    private static final int WINDOW_HEIGHT = 4000;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        IVisualizationManager visualizationManager = new VisualizationManger(new RandomColorPathDrawer(new Color(0.5, 0.5, 1, 1)));
+        IVisualizationManager visualizationManager = new VisualizationManger(WINDOW_HEIGHT, WINDOW_WIDTH,
+                new RandomColorPathDrawer(new Color(1, 0, 0, 1)),
+                new PngImageExporter(WINDOW_HEIGHT, WINDOW_WIDTH));
         visualizationManager.displayWindow(primaryStage);
         visualizationManager.drawCircle(0, 0, 1);
 
         IAngleGenerator angleGenerator = new RandomAngleGenerator();
-        ICoordinateCrawler coordinateCrawler = new ConstantDistanceCoordinateCrawler(0.01, angleGenerator);
+        ICoordinateCrawler coordinateCrawler = new ConstantDistanceCoordinateCrawler(0.005, angleGenerator);
         ICircleExitChecker circleExitChecker = new CircleExitChecker(1);
 
         new AnimationTimer() {
@@ -40,10 +42,11 @@ public class Main extends Application {
             @Override
             public void handle(long now) {
                 Platform.runLater(() -> {
-                    if (!circleExitChecker.isOutsideCircle(_coordinate)) {
-                        _coordinate = coordinateCrawler.randomMoveFrom(_coordinate);
-                        visualizationManager.addPoint(_coordinate);
+                    Coordinate tempCoord = coordinateCrawler.randomMoveFrom(_coordinate);
+                    if (!circleExitChecker.isOutsideCircle(tempCoord)) {
+                        _coordinate = tempCoord;
                     }
+                    visualizationManager.addPoint(_coordinate);
                 });
             }
         }.start();

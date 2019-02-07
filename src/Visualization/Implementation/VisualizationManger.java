@@ -1,73 +1,82 @@
 package Visualization.Implementation;
 
 import Engine.Model.Coordinate;
+import Visualization.Contract.IImageExporter;
 import Visualization.Contract.IPathDrawer;
 import Visualization.Contract.IVisualizationManager;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.util.List;
 
 // TODO: zoom
-// TODO: mode where bug jumps back in, run indefinately?
 // TODO: look at exporting as svg
-// TODO: Live running
 // TODO: when live running, have different stroke modes to have different look? idk??
 
 public class VisualizationManger extends Canvas implements IVisualizationManager {
 
-    private static final int WINDOW_WIDTH = 600;
-    private static final int WINDOW_HEIGHT = 600;
+
 
     private IPathDrawer _pathDrawer;
     private GraphicsContext _gc;
 
+    private int _windowHeight;
+    private int _windowWidth;
     private double _pixelsPerUnitX;
     private double _pixelsPerUnitY;
 
     private Coordinate _lastCoordinate;
+    private IImageExporter _imageExporter;
 
     /**
      * Defaults the canvas to be 2 units across
      * @param pathDrawer
      */
-    public VisualizationManger(IPathDrawer pathDrawer) {
-
-        _pixelsPerUnitX = WINDOW_WIDTH / 2;
-        _pixelsPerUnitY = WINDOW_HEIGHT / 2;
+    public VisualizationManger(int windowHeight, int windowWidth, IPathDrawer pathDrawer, IImageExporter imageExporter) {
+        _windowHeight = windowHeight;
+        _windowWidth = windowWidth;
+        _imageExporter = imageExporter;
         _pathDrawer = pathDrawer;
+
+        _pixelsPerUnitX = _windowWidth / 2;
+        _pixelsPerUnitY = _windowHeight / 2;
     }
 
     @Override
     public void displayWindow(Stage stage) {
-        Canvas canvas = new Canvas(WINDOW_WIDTH, WINDOW_HEIGHT);
+        Canvas canvas = new Canvas(_windowWidth, _windowHeight);
         _gc = canvas.getGraphicsContext2D();
         Pane root = new Pane();
         root.setStyle("-fx-padding: 10;");
         root.getChildren().add(canvas);
 
+        Button exportButton = new Button("Export");
+        exportButton.setOnAction(ev -> _imageExporter.exportImage(canvas));
+        root.getChildren().addAll(exportButton);
+
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        stage.setTitle("Creation of a Canvas");
+        stage.setTitle("Bug Crawler Visualization");
         stage.show();
     }
 
     @Override
     public void drawCircle(int x, int y, int radius) {
-        _pixelsPerUnitX = WINDOW_WIDTH / (2 * radius);
-        _pixelsPerUnitY = WINDOW_HEIGHT / (2 * radius);
+        _pixelsPerUnitX = _windowWidth / (2 * radius);
+        _pixelsPerUnitY = _windowHeight / (2 * radius);
 
-        _gc.strokeOval(x, y, WINDOW_WIDTH, WINDOW_HEIGHT);
+        _gc.strokeOval(x, y, _windowWidth, _windowHeight);
     }
 
     @Override
     public void addPoint(Coordinate coordinate) {
 
-        int centeredX = WINDOW_WIDTH / 2;
-        int centeredY = WINDOW_HEIGHT / 2;
+        int centeredX = _windowWidth / 2;
+        int centeredY = _windowHeight / 2;
 
         double plottedX = centeredX + (_pixelsPerUnitX * coordinate.getX());
         double plottedY = centeredY - (_pixelsPerUnitY * coordinate.getY()); // subtracted because canvas y increases as go down
@@ -84,8 +93,8 @@ public class VisualizationManger extends Canvas implements IVisualizationManager
 
     @Override
     public void addPoints(List<Coordinate> coordinates) {
-        int centeredX = WINDOW_WIDTH / 2;
-        int centeredY = WINDOW_HEIGHT / 2;
+        int centeredX = _windowWidth / 2;
+        int centeredY = _windowHeight / 2;
 
         double[] xPoints = new double[coordinates.size()];
         double[] yPoints = new double[coordinates.size()];
