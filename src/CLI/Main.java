@@ -19,13 +19,13 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    private static final int WINDOW_WIDTH = 5000;
-    private static final int WINDOW_HEIGHT = 5000;
+    private static final int WINDOW_WIDTH = 500;
+    private static final int WINDOW_HEIGHT = 500;
     private static final int NUMBER_OF_TURNS_PER_FRAME = 100000;
-    private static final double LINE_THICKNESS = 0.1;
+    private static final double LINE_THICKNESS = 0.3;
     private static final double SPEED_OF_COLOR_CHANGE = 0.1;
     private static final double CRAWL_SIZE = 0.0005;
-    private static final Color STARTING_COLOR = Color.BLUEVIOLET;
+    private static final Color STARTING_COLOR = Color.RED;
     private static final Color BACKGROUND_COLOR= Color.BLACK;
 
     @Override
