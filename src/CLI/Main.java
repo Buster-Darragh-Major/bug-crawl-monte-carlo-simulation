@@ -22,14 +22,16 @@ public class Main extends Application {
     private static final int WINDOW_WIDTH = 700;
     private static final int WINDOW_HEIGHT = 700;
     private static final int NUMBER_OF_TURNS_PER_FRAME = 1000;
+    private static final Color STARTING_COLOR = Color.RED;
+    private static final Color BACKGROUND_COLOR= Color.BLACK;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         IVisualizationManager visualizationManager = new VisualizationManger(WINDOW_HEIGHT, WINDOW_WIDTH,
-                new RandomColorPathDrawer(new Color(1, 0, 0, 1)),
+                new RandomColorPathDrawer(STARTING_COLOR),
                 new PngImageExporter(WINDOW_HEIGHT, WINDOW_WIDTH));
-        visualizationManager.displayWindow(primaryStage);
+        visualizationManager.displayWindow(primaryStage, BACKGROUND_COLOR);
 
         IAngleGenerator angleGenerator = new RandomAngleGenerator();
         ICoordinateCrawler coordinateCrawler = new ConstantDistanceCoordinateCrawler(0.005, angleGenerator);

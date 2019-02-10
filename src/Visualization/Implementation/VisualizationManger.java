@@ -9,6 +9,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -47,9 +48,11 @@ public class VisualizationManger extends Canvas implements IVisualizationManager
     }
 
     @Override
-    public void displayWindow(Stage stage) {
+    public void displayWindow(Stage stage, Color backgroundColor) {
         Canvas canvas = new Canvas(_windowWidth, _windowHeight);
         _gc = canvas.getGraphicsContext2D();
+        _gc.setFill(backgroundColor);
+        _gc.fillRect(0, 0, _windowWidth, _windowHeight);
         Pane root = new Pane();
         root.setStyle("-fx-padding: 10;");
         root.getChildren().add(canvas);
