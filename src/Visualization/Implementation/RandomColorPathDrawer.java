@@ -16,6 +16,8 @@ public class RandomColorPathDrawer implements IPathDrawer {
     private double _lastGreen;
     private double _lastBlue;
 
+    private Random _rnd;
+
     public RandomColorPathDrawer(Color startingColor, double lineThickness, double speedOfColorChange) {
 
         _lineThickness = lineThickness;
@@ -24,6 +26,8 @@ public class RandomColorPathDrawer implements IPathDrawer {
         _lastRed = startingColor.getRed();
         _lastGreen = startingColor.getGreen();
         _lastBlue = startingColor.getBlue();
+
+        _rnd = new Random();
     }
 
     @Override
@@ -66,9 +70,9 @@ public class RandomColorPathDrawer implements IPathDrawer {
 
     private Color getNeighbouringColor() {
 
-        double randomRed = (2 * _speedOfColorChange * new Random().nextDouble()) - _speedOfColorChange;
-        double randomGreen = (2 * _speedOfColorChange * new Random().nextDouble()) - _speedOfColorChange;
-        double randomBlue = (2 * _speedOfColorChange * new Random().nextDouble()) - _speedOfColorChange;
+        double randomRed = (2 * _speedOfColorChange * _rnd.nextDouble()) - _speedOfColorChange;
+        double randomGreen = (2 * _speedOfColorChange * _rnd.nextDouble()) - _speedOfColorChange;
+        double randomBlue = (2 * _speedOfColorChange * _rnd.nextDouble()) - _speedOfColorChange;
 
         return new Color(
                 _lastRed = normalizeColor(_lastRed + (randomRed * 0.01)),
