@@ -21,15 +21,17 @@ public class Main extends Application {
 
     private static final int WINDOW_WIDTH = 700;
     private static final int WINDOW_HEIGHT = 700;
-    private static final int NUMBER_OF_TURNS_PER_FRAME = 1000;
-    private static final Color STARTING_COLOR = Color.RED;
+    private static final int NUMBER_OF_TURNS_PER_FRAME = 100000;
+    private static final double LINE_THICKNESS = 0.1;
+    private static final double SPEED_OF_COLOR_CHANGE = 0.1;
+    private static final Color STARTING_COLOR = Color.YELLOW;
     private static final Color BACKGROUND_COLOR= Color.BLACK;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         IVisualizationManager visualizationManager = new VisualizationManger(WINDOW_HEIGHT, WINDOW_WIDTH,
-                new RandomColorPathDrawer(STARTING_COLOR),
+                new RandomColorPathDrawer(STARTING_COLOR, LINE_THICKNESS, SPEED_OF_COLOR_CHANGE),
                 new PngImageExporter(WINDOW_HEIGHT, WINDOW_WIDTH));
         visualizationManager.displayWindow(primaryStage, BACKGROUND_COLOR);
 
